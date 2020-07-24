@@ -32,25 +32,22 @@
 
 int main( int argc, char** argv )
 {
-  ros::init(argc, argv, "raposa_marker");
+  ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
+  ros::NodeHandle pn("~");
   ros::Rate r(1);
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("raposa_marker", 1);
-
-  // Set our initial shape type to be a cube
-  uint32_t shape = visualization_msgs::Marker::CUBE;
+  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("upo_marker", 1);
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-  marker.mesh_resource = "package://raposa_marker/Resource/raposa.dae";
+  pn.param("mesh_resource", marker.mesh_resource, std::string("package://upo_markers/resource/raposa.dae"));
 
   // Set the frame ID and timestamp.  See the TF tutorials for information on these.
   marker.header.frame_id = "/base_link";
   
-
   // Set the namespace and id for this marker.  This serves to create a unique ID
   // Any marker sent with the same namespace and id will overwrite the old one
-  marker.ns = "raposa";
+  pn.param("namespace", marker.ns, std::string("upo_marker"));
   marker.id = 0;
 
   // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
