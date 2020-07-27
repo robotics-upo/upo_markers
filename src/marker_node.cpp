@@ -35,12 +35,14 @@ int main( int argc, char** argv )
   ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
   ros::NodeHandle pn("~");
-  ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("upo_marker", 1);
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
   pn.param("mesh_resource", marker.mesh_resource, std::string("package://upo_markers/resource/raposa.dae"));
+  double rate;
+  pn.param("rate", rate, 1.0);
+  ros::Rate r(rate);
 
   // Set the frame ID and timestamp.  See the TF tutorials for information on these.
   marker.header.frame_id = "/base_link";
