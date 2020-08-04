@@ -35,25 +35,14 @@ int main( int argc, char** argv )
   ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
   ros::NodeHandle pn("~");
+  ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("upo_marker", 1);
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-  pn.param("mesh_resource", marker.mesh_resource, std::string("package://upo_markers/resource/raposa.dae"));
-  double rate;
-  pn.param("rate", rate, 1.0);
-  ros::Rate r(rate);
 
   // Set the frame ID and timestamp.  See the TF tutorials for information on these.
   marker.header.frame_id = "/base_link";
-  
-  // Set the namespace and id for this marker.  This serves to create a unique ID
-  // Any marker sent with the same namespace and id will overwrite the old one
-  pn.param("namespace", marker.ns, std::string("upo_marker"));
-  marker.id = 0;
-
-  // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
-  marker.action = visualization_msgs::Marker::ADD;
 
   // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
   marker.pose.position.x = -0.4;
@@ -64,10 +53,39 @@ int main( int argc, char** argv )
   marker.pose.orientation.z = 0.5;
   marker.pose.orientation.w = 0.5;
 
-  // Set the scale of the marker -- 1x1x1 here means 1m on a side
-  marker.scale.x = 0.001;
-  marker.scale.y = 0.001;
-  marker.scale.z = 0.001;
+  std::string default_namespace = "upo_marker";
+  std::string model_name;
+  pn.param("model", model_name, std::string("raposa"));
+  marker.mesh_resource = "package://upo_markers/resource/" + model_name + ".dae";
+  default_namespace = model_name;
+
+  if (model_name == "m600") {
+    // TODO: Change the position for m600?
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.5;
+    marker.pose.orientation.y = 0.5;
+    marker.pose.orientation.z = 0.5;
+    marker.pose.orientation.w = 0.5;
+  } 
+  
+  // Set the namespace and id for this marker.  This serves to create a unique ID
+  // Any marker sent with the same namespace and id will overwrite the old one
+  pn.param("namespace", marker.ns, default_namespace);
+  marker.id = 0;
+
+  // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
+  marker.action = visualization_msgs::Marker::ADD;
+
+  
+  // Set the scale of the marker
+  pn.param("scale", marker.scale.x, 1.0);
+  marker.scale.y = marker.scale.z = marker.scale.x;
+
+  pn.param("scale_x", marker.scale.x, marker.scale.x);
+  pn.param("scale_y", marker.scale.y, marker.scale.y);
+  pn.param("scale_z", marker.scale.z, marker.scale.z);
 
   // Set the color -- be sure to set alpha to something non-zero!
   marker.color.r = 0.9f;
