@@ -40,8 +40,8 @@ int main( int argc, char** argv )
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
 
-  // Set the frame ID and timestamp.  See the TF tutorials for information on these.
-  marker.header.frame_id = "/base_link";
+  // Set the frame ID.  
+  pn.param("base_frame_id", marker.header.frame_id, std::string("/base_link"));
 
   // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
   marker.pose.position.x = -0.4;
