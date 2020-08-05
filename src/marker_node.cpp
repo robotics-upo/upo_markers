@@ -55,7 +55,7 @@ int main( int argc, char** argv )
   std::string default_namespace = "upo_marker";
   std::string model_name;
   pn.param("model", model_name, std::string("raposa"));
-  marker.mesh_resource = "package://upo_markers/resource/" + model_name + ".dae";
+  marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
   default_namespace = model_name;
 
   if (model_name == "m600") {
