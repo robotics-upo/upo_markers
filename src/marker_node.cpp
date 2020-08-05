@@ -35,8 +35,7 @@ int main( int argc, char** argv )
   ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
   ros::NodeHandle pn("~");
-  ros::Rate r(1);
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("upo_marker", 1);
+  ros::Rate r(1);  
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
@@ -94,6 +93,10 @@ int main( int argc, char** argv )
   marker.color.a = 1.0f;
 
   marker.lifetime = ros::Duration();
+
+
+ 
+  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>(marker.ns, 1);
 
   while (ros::ok())
   {
