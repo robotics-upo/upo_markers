@@ -443,8 +443,8 @@ int main( int argc, char **argv)
 		hz = 10.0;	
 	
 	// Create the publisher and subscribers
-	g_width = 0.7;
-	g_shift = 0.1;
+	g_width = 0.73;
+	g_shift = 0.04;
 	pubModel = lnh.advertise<visualization_msgs::MarkerArray>("siar_model", 0);
 	// subStatus = lnh.subscribe("siar_status", 1, statusCallback);
 	
