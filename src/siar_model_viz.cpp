@@ -126,9 +126,9 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.scale.y = 0.04;
 	marker.scale.z = 0.16;
 	marker.color.a = 1.0; 
-	marker.color.r = 175.0/255.0;
-	marker.color.g = 175.0/255.0;
-	marker.color.b = 175.0/255.0;
+	marker.color.r = 125.0/255.0;
+	marker.color.g = 125.0/255.0;
+	marker.color.b = 125.0/255.0;
 	marker.points.clear();
 	model.markers.push_back(marker);
 	
@@ -223,9 +223,9 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.scale.y = 0.12;
 	marker.scale.z = 0.10;
 	marker.color.a = 1.0; 
-	marker.color.r = 175.0/255.0;
-	marker.color.g = 175.0/255.0;
-	marker.color.b = 175.0/255.0;
+	marker.color.r = 125.0/255.0;
+	marker.color.g = 125.0/255.0;
+	marker.color.b = 125.0/255.0;
 	marker.points.clear();
 	model.markers.push_back(marker);
 	
@@ -240,8 +240,8 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.pose.orientation.y =  0.0;
 	marker.pose.orientation.z =  0.0;
 	marker.pose.orientation.w =  1.0;
-	marker.scale.x = 0.26;
-	marker.scale.y = 0.19;
+	marker.scale.x = 0.36;
+	marker.scale.y = 0.29;
 	marker.scale.z = 0.07;
 	marker.color.a = 1.0; 
 	marker.color.r = 255.0/255.0;
@@ -257,8 +257,8 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.pose.orientation.y =  0.0;
 	marker.pose.orientation.z =  0.0;
 	marker.pose.orientation.w =  1.0;
-	marker.scale.x = 0.26;
-	marker.scale.y = 0.26;
+	marker.scale.x = 0.36;
+	marker.scale.y = 0.36;
 	marker.scale.z = 0.07;
 	marker.points.clear();
 	model.markers.push_back(marker);
@@ -273,9 +273,9 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.scale.x = 0.3;
 	marker.scale.y = 0.3;
 	marker.scale.z = 0.03;
-	marker.color.r = 255.0/255.0;
-	marker.color.g = 255.0/255.0;
-	marker.color.b = 255.0/255.0;
+	marker.color.r = 100.0/255.0;
+	marker.color.g = 100.0/255.0;
+	marker.color.b = 100.0/255.0;
 	marker.points.clear();
 	model.markers.push_back(marker);
 	
@@ -290,13 +290,13 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id, float widt
 	marker.pose.orientation.y = 0.0;
 	marker.pose.orientation.z = 0;
 	marker.pose.orientation.w = 1;
-	marker.scale.x = 0.02;
+	marker.scale.x = 0.04;
 	marker.scale.y = 0.0;
 	marker.scale.z = 0.0;
 	marker.color.a = 1.0; 
-	marker.color.r = 175.0/255.0;
-	marker.color.g = 175.0/255.0;
-	marker.color.b = 175.0/255.0;
+	marker.color.r = 105.0/255.0;
+	marker.color.g = 105.0/255.0;
+	marker.color.b = 105.0/255.0;
 	marker.points.clear();
 	p.x = 0.35;
 	p.y = width/2.0 - 0.18;
@@ -443,7 +443,7 @@ int main( int argc, char **argv)
 		hz = 10.0;	
 	
 	// Create the publisher and subscribers
-	g_width = 0.73;
+	g_width = 1.2;
 	g_shift = 0.04;
 	pubModel = lnh.advertise<visualization_msgs::MarkerArray>("siar_model", 0);
 	// subStatus = lnh.subscribe("siar_status", 1, statusCallback);
