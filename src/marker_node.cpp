@@ -58,7 +58,7 @@ int main( int argc, char** argv )
   marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
   default_namespace = model_name;
 
-  if (model_name == "m600") {
+  if (model_name == "m600" || model_name == "m100") {
     // TODO: Change the position for m600?
     marker.pose.position.x = 0;
     marker.pose.position.y = 0;
