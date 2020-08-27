@@ -86,11 +86,12 @@ int main( int argc, char** argv )
   pn.param("scale_y", marker.scale.y, marker.scale.y);
   pn.param("scale_z", marker.scale.z, marker.scale.z);
 
-  // Set the color -- be sure to set alpha to something non-zero!
-  marker.color.r = 0.9f;
-  marker.color.g = 0.9f;
-  marker.color.b = 0.9f;
-  marker.color.a = 1.0f;
+  pn.param("color", marker.color.r, 0.5f);
+  marker.color.g = marker.color.b = marker.color.r;
+
+  pn.param("color_r", marker.color.r, marker.color.r);
+  pn.param("color_g", marker.color.g, marker.color.g);
+  pn.param("color_b", marker.color.b, marker.color.b);
 
   marker.lifetime = ros::Duration();
 
