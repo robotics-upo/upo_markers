@@ -93,6 +93,8 @@ int main( int argc, char** argv )
   pn.param("color_g", marker.color.g, marker.color.g);
   pn.param("color_b", marker.color.b, marker.color.b);
 
+  pn.param("alpha", marker.color.a, 1.0f);
+
   marker.lifetime = ros::Duration();
 
 
