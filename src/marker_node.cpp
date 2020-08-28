@@ -35,12 +35,12 @@ int main( int argc, char** argv )
   ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
   ros::NodeHandle pn("~");
-  ros::Rate r(1);  
+  ros::Rate r(1);
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
 
-  // Set the frame ID.  
+  // Set the frame ID.
   pn.param("base_frame_id", marker.header.frame_id, std::string("/base_link"));
 
   // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
@@ -67,8 +67,10 @@ int main( int argc, char** argv )
     marker.pose.orientation.y = 0.5;
     marker.pose.orientation.z = 0.5;
     marker.pose.orientation.w = 0.5;
-  } 
+  }
+
   
+
   // Set the namespace and id for this marker.  This serves to create a unique ID
   // Any marker sent with the same namespace and id will overwrite the old one
   pn.param("namespace", marker.ns, default_namespace);
@@ -77,7 +79,6 @@ int main( int argc, char** argv )
   // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
   marker.action = visualization_msgs::Marker::ADD;
 
-  
   // Set the scale of the marker
   pn.param("scale", marker.scale.x, 1.0);
   marker.scale.y = marker.scale.z = marker.scale.x;
@@ -95,15 +96,45 @@ int main( int argc, char** argv )
 
   pn.param("alpha", marker.color.a, 1.0f);
 
+  // Circle marker
+  if (model_name == "circle") {
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0;
+    marker.pose.orientation.y = 0;
+    marker.pose.orientation.z = 0;
+    marker.pose.orientation.w = 1;
+    marker.scale.y = marker.scale.z = 0.0;
+    marker.type = visualization_msgs::Marker::LINE_STRIP;
+    // Define the line
+    double radius;
+    pn.param("radius", radius, 2.0);
+    geometry_msgs::Point p;
+    int n_points;
+    pn.param("points", n_points, 50);
+    double inc = 2.0 * M_PI / static_cast<double>(n_points);
+    p.z = 0;
+    for (int i = 0; i < n_points; i++) {
+      p.x = radius * cos ( static_cast<double>(i) * inc );
+      p.y = radius * sin ( static_cast<double>(i) * inc );
+      marker.points.push_back(p);
+    }
+    // Close the circle
+    p.x = radius ;
+    p.y = 0.0;
+    marker.points.push_back(p);
+  }
+
   marker.lifetime = ros::Duration();
 
 
- 
+
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>(marker.ns, 1);
 
   while (ros::ok())
   {
-    marker.header.stamp = ros::Time::now();  
+    marker.header.stamp = ros::Time::now();
 
     // Publish the marker
     while (marker_pub.getNumSubscribers() < 1)
