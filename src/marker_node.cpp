@@ -35,7 +35,10 @@ int main( int argc, char** argv )
   ros::init(argc, argv, "upo_marker");
   ros::NodeHandle n;
   ros::NodeHandle pn("~");
-  ros::Rate r(1);
+
+  double rate;
+  pn.param("rate", rate, 10.0);
+  ros::Rate r(rate);
 
   visualization_msgs::Marker marker;
   marker.type = visualization_msgs::Marker::MESH_RESOURCE;
