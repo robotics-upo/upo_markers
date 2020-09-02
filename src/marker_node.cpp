@@ -66,10 +66,10 @@ int main( int argc, char** argv )
     marker.pose.position.x = 0;
     marker.pose.position.y = 0;
     marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0.5;
-    marker.pose.orientation.y = 0.5;
-    marker.pose.orientation.z = 0.5;
-    marker.pose.orientation.w = 0.5;
+    marker.pose.orientation.x = 0.70711;
+    marker.pose.orientation.y = 0;
+    marker.pose.orientation.z = 0;
+    marker.pose.orientation.w = 0.70711;
   }
 
   
