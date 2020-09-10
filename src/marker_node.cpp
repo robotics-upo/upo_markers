@@ -47,13 +47,13 @@ int main( int argc, char** argv )
   pn.param("base_frame_id", marker.header.frame_id, std::string("/base_link"));
 
   // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-  marker.pose.position.x = -0.4;
-  marker.pose.position.y = -0.25;
-  marker.pose.position.z = -0.15;
-  marker.pose.orientation.x = 0.5;
-  marker.pose.orientation.y = 0.5;
-  marker.pose.orientation.z = 0.5;
-  marker.pose.orientation.w = 0.5;
+  marker.pose.position.x = 0;
+  marker.pose.position.y = 0;
+  marker.pose.position.z = 0;
+  marker.pose.orientation.x = 0;
+  marker.pose.orientation.y = 0;
+  marker.pose.orientation.z = 0;
+  marker.pose.orientation.w = 1;
 
   std::string default_namespace = "upo_marker";
   std::string model_name;
@@ -61,8 +61,17 @@ int main( int argc, char** argv )
   marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
   default_namespace = model_name;
 
+  if (model_name == "raposa") {
+    marker.pose.position.x = -0.3;
+    marker.pose.position.y = -0.22;
+    marker.pose.position.z = -0.15;
+    marker.pose.orientation.x = 0;
+    marker.pose.orientation.y = 0;
+    marker.pose.orientation.z = 0.70711;
+    marker.pose.orientation.w = 0.70711;
+  }
+
   if (model_name == "m600" || model_name == "m100") {
-    // TODO: Change the position for m600?
     marker.pose.position.x = 0;
     marker.pose.position.y = 0;
     marker.pose.position.z = 0;
@@ -90,6 +99,10 @@ int main( int argc, char** argv )
   pn.param("scale_y", marker.scale.y, marker.scale.y);
   pn.param("scale_z", marker.scale.z, marker.scale.z);
 
+  pn.param("position_x", marker.pose.position.x, marker.pose.position.x);
+  pn.param("position_y", marker.pose.position.y, marker.pose.position.y);
+  pn.param("position_z", marker.pose.position.z, marker.pose.position.z);
+
   pn.param("color", marker.color.r, 0.5f);
   marker.color.g = marker.color.b = marker.color.r;
 
@@ -99,8 +112,8 @@ int main( int argc, char** argv )
 
   pn.param("alpha", marker.color.a, 1.0f);
 
-  // Circle marker
-  if (model_name == "circle") {
+  // Circle marker. Could  be used for representing regular polygons
+  if (model_name == "circle" || model_name == "polygon") {
     marker.pose.position.x = 0;
     marker.pose.position.y = 0;
     marker.pose.position.z = 0;
@@ -131,9 +144,7 @@ int main( int argc, char** argv )
 
   marker.lifetime = ros::Duration();
 
-
-
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>(marker.ns, 1);
+  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>(marker.ns + "/marker", 1);
 
   while (ros::ok())
   {
@@ -154,4 +165,5 @@ int main( int argc, char** argv )
 
     r.sleep();
   }
+  return 0;
 }
