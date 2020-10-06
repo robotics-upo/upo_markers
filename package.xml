@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>upo_markers</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>A common package for installing Markers for representation purposes</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->

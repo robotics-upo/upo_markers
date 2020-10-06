@@ -162,9 +162,9 @@ target_link_libraries(siar_marker_node
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS marker_node siar_marker_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
@@ -182,11 +182,13 @@ target_link_libraries(siar_marker_node
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+  Resource/m100.dae
+  Resource/m600.dae
+  Resource/raposa.dae
+  # myfile2
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/Resource
+)
 
 #############
 ## Testing ##
