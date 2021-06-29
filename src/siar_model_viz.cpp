@@ -438,7 +438,7 @@ int main( int argc, char **argv)
 	std::string frame_id;
 	double hz;
 	if(!lnh.getParam("frame_id", frame_id))
-		frame_id = "/base_link";	
+		frame_id = "base_link";	
 	if(!lnh.getParam("hz", hz))
 		hz = 10.0;	
 	
