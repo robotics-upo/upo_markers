@@ -20,7 +20,7 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id)
 	marker.action = visualization_msgs::Marker::ADD;
 	marker.pose.position.x = 0;
 	marker.pose.position.y = 0;
-	marker.pose.position.z = g_height;
+	marker.pose.position.z = 0;
 	marker.pose.orientation.x = 0;
 	marker.pose.orientation.y =  0.0;
 	marker.pose.orientation.z =  0.0;
@@ -37,10 +37,12 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id)
 
 	// Add front-left wheel
 	marker.id = id++;
-  marker.type = visualization_msgs::Marker::CUBE;
+  double wheel_height = -0.05;
+  marker.type = visualization_msgs::Marker::CYLINDER;
+  marker.action = visualization_msgs::Marker::ADD;
 	marker.pose.position.x = 0.231;
 	marker.pose.position.y = 0.31;
-	marker.pose.position.z = 0.05;
+	marker.pose.position.z = wheel_height;
 	marker.pose.orientation.x =  0.707;
 	marker.pose.orientation.y =  0.0;
 	marker.pose.orientation.z =  0.0;
@@ -56,50 +58,20 @@ visualization_msgs::MarkerArray buildRobotModel(std::string frame_id)
 
 	// Add front-right wheel
 	marker.id = id++;
-  marker.type = visualization_msgs::Marker::CUBE;
 	marker.pose.position.x = 0.231;
 	marker.pose.position.y = -0.31;
-	marker.pose.position.z = 0.05;
-	marker.pose.orientation.x =  0.707;
-	marker.pose.orientation.y =  0.0;
-	marker.pose.orientation.z =  0.0;
-	marker.pose.orientation.w =  0.707;
-	marker.scale.x = 0.2;
-	marker.scale.y = 0.2;
-	marker.scale.z = 0.1;
-  marker.color.r = 50.0/255.0;
-  marker.color.g = 50.0/255.0;
-  marker.color.b = 50.0/255.0;
-	marker.points.clear();
 	model.markers.push_back(marker);
 
 	// Add back-right wheel
 	marker.id = id++;
 	marker.pose.position.x = -0.231;
 	marker.pose.position.y = -0.31;
-	marker.pose.position.z = 0.05;
-	marker.pose.orientation.x =  0.707;
-	marker.pose.orientation.y =  0.0;
-	marker.pose.orientation.z =  0.0;
-	marker.pose.orientation.w =  0.707;
-	marker.scale.x = 0.2;
-	marker.scale.y = 0.2;
-	marker.scale.z = 0.1;
-	marker.points.clear();
 	model.markers.push_back(marker);
 	
 	// Add back-left wheel
 	marker.id = id++;
 	marker.pose.position.x = -0.231;
 	marker.pose.position.y = 0.31;
-	marker.pose.position.z = 0.05;
-	marker.pose.orientation.x =  0.707;
-	marker.pose.orientation.y =  0.0;
-	marker.pose.orientation.z =  0.0;
-	marker.pose.orientation.w =  0.707;
-	marker.scale.x = 0.2;
-	marker.scale.y = 0.2;
-	marker.scale.z = 0.1;
 	marker.points.clear();
 	model.markers.push_back(marker);
 
