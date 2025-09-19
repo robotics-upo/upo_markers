@@ -27,143 +27,150 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
-#include <visualization_msgs/Marker.h>
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <string>
 
-int main( int argc, char** argv )
-{
-  ros::init(argc, argv, "upo_marker");
-  ros::NodeHandle n;
-  ros::NodeHandle pn("~");
+#include "rclcpp/rclcpp.hpp"
+#include <visualization_msgs/msg/marker.hpp>
 
-  double rate;
-  pn.param("rate", rate, 10.0);
-  ros::Rate r(rate);
 
-  visualization_msgs::Marker marker;
-  marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-
-  // Set the frame ID.
-  pn.param("base_frame_id", marker.header.frame_id, std::string("base_link"));
-
-  // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-  marker.pose.position.x = 0;
-  marker.pose.position.y = 0;
-  marker.pose.position.z = 0;
-  marker.pose.orientation.x = 0;
-  marker.pose.orientation.y = 0;
-  marker.pose.orientation.z = 0;
-  marker.pose.orientation.w = 1;
-
-  std::string default_namespace = "upo_marker";
-  std::string model_name;
-  pn.param("model", model_name, std::string("raposa"));
-  marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
-  default_namespace = model_name;
-
-  if (model_name == "raposa") {
-    marker.pose.position.x = -0.3;
-    marker.pose.position.y = -0.22;
-    marker.pose.position.z = -0.15;
-    marker.pose.orientation.x = 0;
-    marker.pose.orientation.y = 0;
-    marker.pose.orientation.z = 0.70711;
-    marker.pose.orientation.w = 0.70711;
-  }
-
-  if (model_name == "m600" || model_name == "m100") {
-    marker.pose.position.x = 0;
-    marker.pose.position.y = 0;
-    marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0.70711;
-    marker.pose.orientation.y = 0;
-    marker.pose.orientation.z = 0;
-    marker.pose.orientation.w = 0.70711;
-  }
-
+using namespace std::chrono_literals;
   
-
-  // Set the namespace and id for this marker.  This serves to create a unique ID
-  // Any marker sent with the same namespace and id will overwrite the old one
-  pn.param("namespace", marker.ns, default_namespace);
-  marker.id = 0;
-
-  // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
-  marker.action = visualization_msgs::Marker::ADD;
-
-  // Set the scale of the marker
-  pn.param("scale", marker.scale.x, 1.0);
-  marker.scale.y = marker.scale.z = marker.scale.x;
-
-  pn.param("scale_x", marker.scale.x, marker.scale.x);
-  pn.param("scale_y", marker.scale.y, marker.scale.y);
-  pn.param("scale_z", marker.scale.z, marker.scale.z);
-
-  pn.param("position_x", marker.pose.position.x, marker.pose.position.x);
-  pn.param("position_y", marker.pose.position.y, marker.pose.position.y);
-  pn.param("position_z", marker.pose.position.z, marker.pose.position.z);
-
-  pn.param("color", marker.color.r, 0.5f);
-  marker.color.g = marker.color.b = marker.color.r;
-
-  pn.param("color_r", marker.color.r, marker.color.r);
-  pn.param("color_g", marker.color.g, marker.color.g);
-  pn.param("color_b", marker.color.b, marker.color.b);
-
-  pn.param("alpha", marker.color.a, 1.0f);
-
-  // Circle marker. Could  be used for representing regular polygons
-  if (model_name == "circle" || model_name == "polygon") {
-    marker.pose.position.x = 0;
-    marker.pose.position.y = 0;
-    marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0;
-    marker.pose.orientation.y = 0;
-    marker.pose.orientation.z = 0;
-    marker.pose.orientation.w = 1;
-    marker.scale.y = marker.scale.z = 0.0;
-    marker.type = visualization_msgs::Marker::LINE_STRIP;
-    // Define the line
-    double radius;
-    pn.param("radius", radius, 2.0);
-    geometry_msgs::Point p;
-    int n_points;
-    pn.param("points", n_points, 50);
-    double inc = 2.0 * M_PI / static_cast<double>(n_points);
-    p.z = 0;
-    for (int i = 0; i < n_points; i++) {
-      p.x = radius * cos ( static_cast<double>(i) * inc );
-      p.y = radius * sin ( static_cast<double>(i) * inc );
-      marker.points.push_back(p);
-    }
-    // Close the circle
-    p.x = radius ;
-    p.y = 0.0;
-    marker.points.push_back(p);
-  }
-
-  marker.lifetime = ros::Duration();
-
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>(marker.ns + "/marker", 1);
-
-  while (ros::ok())
-  {
-    marker.header.stamp = ros::Time::now();
-
-    // Publish the marker
-    while (marker_pub.getNumSubscribers() < 1)
+class UPOMarker : public rclcpp::Node
+{
+  public:
+    UPOMarker()
+    : Node("upo_marker"), count_(0)
     {
-      if (!ros::ok())
-      {
-        return 0;
-      }
-      ROS_WARN_ONCE("Please create a subscriber to the marker");
-      sleep(1);
-    }
-    ROS_INFO_ONCE("Publishing marker");
-    marker_pub.publish(marker);
+      publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("upo_marker", 10);
+      timer_ = this->create_wall_timer(
+      100ms, std::bind(&UPOMarker::timer_callback, this));
 
-    r.sleep();
-  }
+      init_parameters();
+      init_marker();
+      
+    }
+
+  private:
+    void timer_callback()
+    {
+      marker.header.stamp = this->get_clock()->now();
+      publisher_->publish(marker);
+    }
+
+    void init_parameters() {
+      this->declare_parameter("frame_id", "base_link");
+      this->declare_parameter("model", "m600");
+      this->declare_parameter("scale", 1.0f);
+      this->declare_parameter("position_x", 0.0f);
+      this->declare_parameter("position_y", 0.0f);
+      this->declare_parameter("position_z", 0.0f);
+      this->declare_parameter("radius", 2.0f);
+      this->declare_parameter("points", 50);
+      this->declare_parameter("radius", 1.0f);
+    }
+
+    void init_marker() {
+      marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+
+      // Set the frame ID.
+      std::string base_link = this->get_parameter("frame_id").as_string();
+
+      // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
+      marker.pose.position.x = 0;
+      marker.pose.position.y = 0;
+      marker.pose.position.z = 0;
+      marker.pose.orientation.x = 0;
+      marker.pose.orientation.y = 0;
+      marker.pose.orientation.z = 0;
+      marker.pose.orientation.w = 1;
+
+      std::string model_name;
+      model_name = this->get_parameter("model").as_string();
+      marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
+
+      if (model_name == "raposa") {
+        marker.pose.position.x = -0.3;
+        marker.pose.position.y = -0.22;
+        marker.pose.position.z = -0.15;
+        marker.pose.orientation.x = 0;
+        marker.pose.orientation.y = 0;
+        marker.pose.orientation.z = 0.70711;
+        marker.pose.orientation.w = 0.70711;
+      }
+
+      if (model_name == "m600" || model_name == "m100") {
+        marker.pose.position.x = 0;
+        marker.pose.position.y = 0;
+        marker.pose.position.z = 0;
+        marker.pose.orientation.x = 0.70711;
+        marker.pose.orientation.y = 0;
+        marker.pose.orientation.z = 0;
+        marker.pose.orientation.w = 0.70711;
+      }
+      marker.id = 0;
+
+      // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
+      marker.action = visualization_msgs::msg::Marker::ADD;
+
+      // Set the scale of the marker
+      
+      marker.scale.y = marker.scale.z = marker.scale.x = this->get_parameter("scale").as_double(); //TODO scale independent (x,y,z)
+
+      marker.pose.position.x = this->get_parameter("position_x").as_double();
+      marker.pose.position.y = this->get_parameter("position_y").as_double();
+      marker.pose.position.z = this->get_parameter("position_z").as_double();
+      
+      marker.color.r = this->get_parameter("r").as_double();
+      marker.color.g = this->get_parameter("g").as_double();
+      marker.color.b = this->get_parameter("b").as_double();
+      
+      marker.color.a = this->get_parameter("alpha").as_double();
+
+      // Circle marker. Could  be used for representing regular polygons
+      if (model_name == "circle" || model_name == "polygon") {
+        marker.pose.position.x = 0;
+        marker.pose.position.y = 0;
+        marker.pose.position.z = 0;
+        marker.pose.orientation.x = 0;
+        marker.pose.orientation.y = 0;
+        marker.pose.orientation.z = 0;
+        marker.pose.orientation.w = 1;
+        marker.scale.y = marker.scale.z = 0.0;
+        marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
+        // Define the line
+        double radius = this->get_parameter("radius").as_double();
+        geometry_msgs::msg::Point p;
+        int n_points = this->get_parameter("points").as_int();
+        double inc = 2.0 * M_PI / static_cast<double>(n_points);
+        p.z = 0;
+        for (int i = 0; i < n_points; i++) {
+          p.x = radius * cos ( static_cast<double>(i) * inc );
+          p.y = radius * sin ( static_cast<double>(i) * inc );
+          marker.points.push_back(p);
+        }
+        // Close the circle
+        p.x = radius ;
+        p.y = 0.0;
+        marker.points.push_back(p);
+      }
+
+      
+    }
+
+
+    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
+    size_t count_;
+    visualization_msgs::msg::Marker marker;
+};
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<UPOMarker>());
+  rclcpp::shutdown();
   return 0;
 }
