@@ -19,7 +19,8 @@ class ArcoMarker : public rclcpp::Node
       100ms, std::bind(&ArcoMarker::timer_callback, this));
 	  message_ = buildRobotModel(frame_id);
 
-	  frame_id = "arco/base_link";	
+	  this->declare_parameter("frame_id", "arco/base_link");
+	  frame_id = this->get_parameter("frame_id").as_string();	
     }
 
   private:
@@ -39,7 +40,7 @@ class ArcoMarker : public rclcpp::Node
 		marker.header.frame_id = frame_id;
 		marker.header.stamp = this->get_clock()->now();
 		marker.ns = "arco_model";
-		marker.id = id;
+		marker.id = id++;
 		marker.type = visualization_msgs::msg::Marker::CUBE;
 		marker.action = visualization_msgs::msg::Marker::ADD;
 		marker.pose.position.x = 0;
@@ -107,7 +108,9 @@ class ArcoMarker : public rclcpp::Node
 	visualization_msgs::msg::MarkerArray message_;
 	std::string frame_id = "arco/base_link";
 
-	double g_width, g_height, g_length;
+	double g_width = 0.714;
+	double g_length = 0.723;
+	double g_height = 0.15;
 };
 
 int main(int argc, char * argv[])
