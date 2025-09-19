@@ -22,8 +22,11 @@ ament_target_dependencies(marker_node rclcpp visualization_msgs)
 
 
 install(TARGETS
-  arco_marker marker_node
+  arco_marker marker_node 
   DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY 
+  Resource/
+  DESTINATION  share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
