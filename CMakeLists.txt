@@ -26,7 +26,7 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY 
   Resource/
-  DESTINATION  share/${PROJECT_NAME})
+  DESTINATION  share)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

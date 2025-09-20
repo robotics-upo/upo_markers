@@ -62,21 +62,25 @@ class UPOMarker : public rclcpp::Node
 
     void init_parameters() {
       this->declare_parameter("frame_id", "base_link");
-      this->declare_parameter("model", "m600");
+      this->declare_parameter("model", "m600"); // Types: m100, m600, raposa, circle, polygon
       this->declare_parameter("scale", 1.0f);
       this->declare_parameter("position_x", 0.0f);
       this->declare_parameter("position_y", 0.0f);
       this->declare_parameter("position_z", 0.0f);
+      this->declare_parameter("r", 0.75f);
+      this->declare_parameter("g", 0.75f);
+      this->declare_parameter("b", 0.75f);
+      this->declare_parameter("alpha", 1.0f);
       this->declare_parameter("radius", 2.0f);
       this->declare_parameter("points", 50);
-      this->declare_parameter("radius", 1.0f);
-    }
+      }
 
     void init_marker() {
       marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
 
       // Set the frame ID.
       std::string base_link = this->get_parameter("frame_id").as_string();
+      marker.header.frame_id = base_link;
 
       // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
       marker.pose.position.x = 0;
@@ -89,7 +93,9 @@ class UPOMarker : public rclcpp::Node
 
       std::string model_name;
       model_name = this->get_parameter("model").as_string();
-      marker.mesh_resource = "package://upo_markers/Resource/" + model_name + ".dae";
+      marker.mesh_resource = "package://upo_markers/" + model_name + ".dae";
+      // marker.mesh_resource = "file:///home/muten/" + model_name + ".dae";
+
 
       if (model_name == "raposa") {
         marker.pose.position.x = -0.3;
