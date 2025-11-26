@@ -20,13 +20,15 @@ ament_target_dependencies(marker_node rclcpp visualization_msgs)
 # add_executable(siar_model_viz src/siar_model_viz.cpp)
 # ament_target_dependencies(siar_model_viz rclcpp visualization_msgs)
 
-
 install(TARGETS
   arco_marker marker_node 
   DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY 
   Resource/
   DESTINATION  share)
+  install(DIRECTORY 
+  Resource/
+  DESTINATION  share/upo_markers)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
